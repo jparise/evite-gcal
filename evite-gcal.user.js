@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name           Google Calendar from Evite
 // @namespace      http://www.indelible.org/
-// @description    Replaces the Outlook Calendar link in Evite invitations with a Google Calendar link
+// @description    Replaces the default calendar link in Evite invitations with a Google Calendar link instead.
 // @author         Jon Parise
-// @version        1.0
+// @version        1.1
 // @include        http://www.evite.com/pages/invite/*
 // ==/UserScript==
 
@@ -144,11 +144,11 @@ function makeGoogleCalendarLink()
         '&trp=true&sprop=website:www.evite.com&sprop=name:Evite';
 }
 
-// Find the Outlook Calendar link element.
-var outlookRE = /Outlook/;
+// Find the exsting calendar link element.
+var calendarRE = /Calendar/;
 var link, links = document.getElementsByTagName('a');
 for (var i = 0; i < links.length; ++i) {
-    if (outlookRE.test(links[i].innerHTML)) {
+    if (calendarRE.test(links[i].innerHTML)) {
         link = links[i];
         break;
     }
