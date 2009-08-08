@@ -3,7 +3,7 @@
 // @namespace      http://www.indelible.org/
 // @description    Replaces the default calendar link in Evite invitations with a Google Calendar link instead.
 // @author         Jon Parise
-// @version        1.3
+// @version        1.4
 // @include        http://www.evite.com/pages/invite/*
 // ==/UserScript==
 
@@ -60,7 +60,7 @@ function getDateTime(text)
 function parseDates(e)
 {
     // e.g. December 31, 7:00PM
-    dates = e.innerHTML.match(/\w+ \d+, \d+:\d+(?:AM|PM)/g);
+    dates = e.innerHTML.match(/(\w+ \d+, )?\d+:\d+(?:AM|PM)/g);
 
     // We handle events with only a "start" time (in which case the "end" time
     // is set to the start time) or both a explicit "start" and "end" time.
@@ -68,6 +68,15 @@ function parseDates(e)
         dates[0] = getDateTime(dates[0]);
         dates[1] = dates[0];
     } else if (dates.length == 2) {
+        // Handle the case where the start and end times are on the same day.
+        // Evite only prints the day once in this case, so we borrow the date
+        // portion from the start time and prepend it to the end time.
+        var dayRE = /\w+ \d+, /;
+        if (!dayRE.test(dates[1])) {
+            day = dayRE.exec(dates[0]);
+            dates[1] = day + dates[1];
+        }
+
         dates[0] = getDateTime(dates[0]);
         dates[1] = getDateTime(dates[1]);
 
