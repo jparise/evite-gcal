@@ -112,10 +112,20 @@ function parseLocation(e)
     text = text.replace(/<br\s*\/?>/gi, ', ');
     text = text.split("\n", 1)[0];
 
-    // Attempt to trim off everything up to the first numeric part of the
-    // address so that Google Maps has a better chance at parsing this string.
-    // This is clearly *not* a very scientific approach.
-    text = text.replace(/[^0-9]*/, '');
+    // Attempt to separate the location string into a place name and an
+    // address.  We split the string into comma-delimited parts, and if the
+    // first part doesn't start with a number, it is used as the place name.
+    //
+    // Unfortunately, this fails to work for places whose names start with
+    // numbers.  Fixing that probably involves considering the second part and
+    // checking if it also starts with a number, in which case the second part
+    // is probably the start of the address.  That may be more error prone,
+    // however, and the current approach degrades safely.
+    parts = text.split(/\s?,\s?/);
+    if (parts.length > 1 && parts[0].match(/^\D/)) {
+        text = parts.slice(1).join(', ');
+        text += ' (' + parts[0] + ')';
+    }
 
     return text;
 }
