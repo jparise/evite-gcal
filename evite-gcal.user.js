@@ -3,9 +3,20 @@
 // @namespace      http://www.indelible.org/
 // @description    Replaces the default calendar link in Evite invitations with a Google Calendar link instead.
 // @author         Jon Parise
-// @version        1.4
+// @version        1.5
 // @include        http://www.evite.com/pages/invite/*
 // ==/UserScript==
+
+function unwrap(e)
+{
+    // The desired content may be wrapped in a <div> element.
+    var divs = e.getElementsByTagName('div');
+    if (divs.length > 0) {
+        return divs[0].innerHTML;
+    }
+
+    return e.innerHTML;
+}
 
 function getMonth(name)
 {
@@ -97,7 +108,7 @@ function parseDates(e)
 
 function parseLocation(e)
 {
-    var text = e.innerHTML;
+    var text = unwrap(e);
     text = text.replace(/<br\s*\/?>/gi, ', ');
     text = text.split('>', 2)[1];
     text = text.split("\n", 1)[0];
@@ -140,13 +151,7 @@ function makeGoogleCalendarLink()
 
     var details = '';
     if (detailsIndex != -1) {
-        // The details text may be wrapped in a <div> element.
-        var divs = tds[detailsIndex].getElementsByTagName('div');
-        if (divs.length > 0) {
-            details = divs[0].innerHTML;
-        } else {
-            details = tds[detailsIndex].innerHTML;
-        }
+        details = unwrap(tds[detailsIndex]);
 
         // Trim off any leading whitespace.
         details = details.replace(/^\s*/, '');
