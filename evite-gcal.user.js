@@ -110,7 +110,6 @@ function parseLocation(e)
 {
     var text = unwrap(e);
     text = text.replace(/<br\s*\/?>/gi, ', ');
-    text = text.split('>', 2)[1];
     text = text.split("\n", 1)[0];
 
     // Attempt to trim off everything up to the first numeric part of the
